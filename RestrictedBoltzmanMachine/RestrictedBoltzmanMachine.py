@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Dec 20 16:28:02 2015
+Last update on Mon Dec 22 2015
 
 @author: michielstock
 
-Implementation of a restricted boltzman machine
+Implementation of a restricted boltzman machine, uses an approximate scheme
+for training
 """
 
 import numpy as np
 from random import shuffle
 
 sigmoid = lambda x : 1 / (1 + np.exp(-x))
+
 
 class RestrictedBoltzmanMachine:
     """
@@ -30,7 +33,7 @@ class RestrictedBoltzmanMachine:
         if sample is true: return binary samples, else return probabilities
         """
         probs = sigmoid(np.dot(self._weights, hidden.T).T
-                            + self._bias_visible.T)
+                                        + self._bias_visible.T)
         if sample:
             return np.random.binomial(1, probs)
         else:
@@ -56,7 +59,7 @@ class RestrictedBoltzmanMachine:
             hidden = self.hidden_given_visible(visible)
             visible = self.visible_given_hidden(hidden)
         return visible, hidden
-    
+
     def update_weights(self, visible, learning_rate, sampling_steps):
         """
         Updates weigths
@@ -67,9 +70,9 @@ class RestrictedBoltzmanMachine:
                                                          sampling_steps)
         self._weights += lr * (np.dot(visible.T, hidden) -
                                       np.dot(fantasy_vis.T, fantasy_hid))
-        self._bias_visible += lr * (visible.sum(0) 
+        self._bias_visible += lr * (visible.sum(0)
                                     - fantasy_vis.sum(0)).reshape((-1,1))
-        self._bias_hidden += lr * (hidden.sum(0) 
+        self._bias_hidden += lr * (hidden.sum(0)
                                     - fantasy_hid.sum(0)).reshape((-1,1))
     
     def train_stochastic_gradient_ascent(self, X, learning_rate=0.01,
@@ -101,3 +104,6 @@ if __name__ == '__main__':
     error += rbm.train_stochastic_gradient_ascent(pattern, learning_rate=0.01,
                                                  iterations=5000,
                                                  sampling_steps=4)
+    error += rbm.train_stochastic_gradient_ascent(pattern, learning_rate=0.001,
+                                                 iterations=5000,
+                                                 sampling_steps=10)
