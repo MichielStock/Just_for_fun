@@ -11,7 +11,6 @@ for training
 
 import numpy as np
 from random import shuffle
-from RBM_numba import sample_fantasies_numba
 
 sigmoid = lambda x : 1 / (1 + np.exp(-x))
 
@@ -54,7 +53,11 @@ class RestrictedBoltzmanMachine:
         """
         Create some fantasy particles using (approximate) Gibs sampling
         """
-        return sample_fantasies_numba(self, visible_seed, sampling_steps)
+        visible = visible_seed.copy()
+        for i in range(sampling_steps):
+            hidden = self.hidden_given_visible(visible)
+            visible = self.visible_given_hidden(hidden)
+            return visible, hidden
 
     def update_weights(self, visible, learning_rate, sampling_steps):
         """
