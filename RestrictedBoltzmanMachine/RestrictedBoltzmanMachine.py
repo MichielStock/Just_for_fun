@@ -11,9 +11,9 @@ for training
 
 import numpy as np
 from random import shuffle
+from RBM_numba import sample_fantasies_numba
 
 sigmoid = lambda x : 1 / (1 + np.exp(-x))
-
 
 class RestrictedBoltzmanMachine:
     """
@@ -54,11 +54,7 @@ class RestrictedBoltzmanMachine:
         """
         Create some fantasy particles using (approximate) Gibs sampling
         """
-        visible = visible_seed.copy()
-        for i in range(sampling_steps):
-            hidden = self.hidden_given_visible(visible)
-            visible = self.visible_given_hidden(hidden)
-        return visible, hidden
+        return sample_fantasies_numba(self, visible_seed, sampling_steps)
 
     def update_weights(self, visible, learning_rate, sampling_steps):
         """
@@ -97,13 +93,18 @@ class RestrictedBoltzmanMachine:
 if __name__ == '__main__':
 
     rbm = RestrictedBoltzmanMachine(100, 10)
-    pattern = np.kron(np.random.binomial(1, 0.5, (100, 10)), np.ones((1, 10)))   
+    pattern = np.kron(np.random.binomial(1, 0.5, (100, 10)), np.ones((1, 10)))
+
     error = rbm.train_stochastic_gradient_ascent(pattern, learning_rate=0.1,
                                                  iterations=5000,
                                                  sampling_steps=2)
+                                                 
+    print rbm.sample_fantasies(np.random.binomial(1, 0.5,(5, 100)))
+    """
     error += rbm.train_stochastic_gradient_ascent(pattern, learning_rate=0.01,
                                                  iterations=5000,
                                                  sampling_steps=4)
     error += rbm.train_stochastic_gradient_ascent(pattern, learning_rate=0.001,
                                                  iterations=5000,
                                                  sampling_steps=10)
+    """
