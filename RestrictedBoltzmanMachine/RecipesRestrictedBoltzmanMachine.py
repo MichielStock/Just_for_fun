@@ -21,9 +21,9 @@ class RecipeRestrictedBoltzmanMachine(RestrictedBoltzmanMachine):
     Special version of the vanilla RBM suitable for recipe recommendation
     """
     def __init__(self, ingredients, regions, categories, n_hidden):
-        self.ingredients = ingredients
-        self.regions = regions
-        self.categories = categories
+        self.ingredients = list(ingredients)
+        self.regions = list(regions)
+        self.categories = list(categories)
         n_visible = len(ingredients) + len(regions)
         self._bias_visible = np.random.randn(n_visible, 1) / 100
         self._bias_hidden = np.random.randn(n_hidden, 1) / 100
@@ -73,10 +73,10 @@ class RecipeRestrictedBoltzmanMachine(RestrictedBoltzmanMachine):
         Model can be loaded with the class
             'RecipeRestrictedBoltzmanMachinePretrained'
         """
-        pd.DataFrame(self._weights, index=self.ingredients).to_csv(
-                        '{0}_{1}'.format(directory, 'weigths'))
-        pd.DataFrame(self._bias_visible, index=self.ingredients).to_csv(
-                        '{0}_{1}'.format(directory, 'bias_visible'))
+        pd.DataFrame(self._weights, index=self.ingredients + self.regions
+                    ).to_csv('{0}_{1}'.format(directory, 'weigths'))
+        pd.DataFrame(self._bias_visible, index=self.ingredients + self.regions
+                    ).to_csv('{0}_{1}'.format(directory, 'bias_visible'))
         pd.DataFrame(self._bias_hidden).to_csv(
                         '{0}_{1}'.format(directory, 'bias_hidden'))
         pd.DataFrame(self.categories, index=self.ingredients).to_csv(
@@ -98,6 +98,7 @@ if __name__ == '__main__':
     # load the data
     print('LOADING DATA')
     print('_' * 50)
+    print()
 
     recipes = pd.DataFrame.from_csv('Recipes_with_origin.csv')
     print(recipes.head())
@@ -107,10 +108,11 @@ if __name__ == '__main__':
 
     ingredients = recipes.columns[:-11]
     regions = recipes.columns[-11:]
-    
+
     # initializing and training the model
     print('TRAINING THE MODEL')
     print('_' * 50)
+    print()
 
     rbm = RecipeRestrictedBoltzmanMachine(ingredients, regions, n_hidden=250,
                                           categories=list(categories.category))
@@ -118,15 +120,12 @@ if __name__ == '__main__':
     error = rbm.train_C1(recipes.values, learning_rate=0.1,
                          iterations=10, minibatch_size=20)
 
-
     plt.plot(error)
     plt.loglog()
-    
+
     # initializing and training the model
     print('SAVING THE MODEL')
     print('_' * 50)
-    
+    print()
+
     rbm.save('Recipe_parameters/')
-
-
-
