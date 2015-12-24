@@ -139,18 +139,7 @@ if __name__ == '__main__':
 
     rbm = RestrictedBoltzmanMachine(100, 10)
     pattern = np.kron(np.random.binomial(1, 0.5, (100, 10)), np.ones((1, 10)))
-    error = rbm.train_C1(pattern, learning_rate=0.001, iterations=1000)
-    
-    #error = rbm.train_stochastic_gradient_ascent(pattern, learning_rate=0.1,
-   #                                             iterations=5000,
-    #                                             sampling_steps=1)
+    error = rbm.train_C1(pattern, learning_rate=0.001, iterations=1000,
+                              sampling_steps=1)
                                                  
     print rbm.sample_fantasies(np.random.binomial(1, 0.5,(5, 100)))
-    """
-    error += rbm.train_stochastic_gradient_ascent(pattern, learning_rate=0.01,
-                                                 iterations=5000,
-                                                 sampling_steps=1)
-    error += rbm.train_stochastic_gradient_ascent(pattern, learning_rate=0.001,
-                                                 iterations=5000,
-                                                 sampling_steps=1)
-    """
