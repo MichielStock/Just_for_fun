@@ -73,12 +73,14 @@ class RecipeRestrictedBoltzmanMachine(RestrictedBoltzmanMachine):
         Model can be loaded with the class
             'RecipeRestrictedBoltzmanMachinePretrained'
         """
-        model_data = {'ingredients': self.ingredients, 'regions':
-            self.regions, 'bias_visible': self._bias_visible,
-            'bias_hidden': self._bias_hidden, 'weights': self._weights,
-            'categories': self.categories}
-        for name, data_piece in model_data.iteritems():
-            np.savetxt('{}_{}'.format(directory, name), np.array(data_piece))
+        pd.DataFrame(self._weights, index=self.ingredients).to_csv(
+                        '{0}_{1}'.format(directory, 'weigths'))
+        pd.DataFrame(self._bias_visible, index=self.ingredients).to_csv(
+                        '{0}_{1}'.format(directory, 'bias_visible'))
+        pd.DataFrame(self._bias_hidden).to_csv(
+                        '{0}_{1}'.format(directory, 'bias_hidden'))
+        pd.DataFrame(self.categories, index=self.ingredients).to_csv(
+                        '{0}_{1}'.format(directory, 'categories'))
 
 
 class RecipeRestrictedBoltzmanMachinePretrained(
@@ -105,8 +107,12 @@ if __name__ == '__main__':
 
     ingredients = recipes.columns[:-11]
     regions = recipes.columns[-11:]
+    
+    # initializing and training the model
+    print('TRAINING THE MODEL')
+    print('_' * 50)
 
-    rbm = RecipeRestrictedBoltzmanMachine(ingredients, regions, n_hidden=25,
+    rbm = RecipeRestrictedBoltzmanMachine(ingredients, regions, n_hidden=250,
                                           categories=list(categories.category))
 
     error = rbm.train_C1(recipes.values, learning_rate=0.1,
@@ -115,6 +121,10 @@ if __name__ == '__main__':
 
     plt.plot(error)
     plt.loglog()
+    
+    # initializing and training the model
+    print('SAVING THE MODEL')
+    print('_' * 50)
     
     rbm.save('Recipe_parameters/')
 
