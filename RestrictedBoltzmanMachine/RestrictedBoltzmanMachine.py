@@ -131,7 +131,10 @@ class RestrictedBoltzmanMachine:
                 # update start
                 start += minibatch_size
                 # error
-                mse_reconstr.append(np.mean((reconstr - visible)**2))
+            complete_reconstruction = self.visible_given_hidden(
+                    self.hidden_given_visible(X, sample=True), sample=False)
+            mse_reconstr.append(np.mean((complete_reconstruction -
+                                                                visible)**2))
         return mse_reconstr
         
         
