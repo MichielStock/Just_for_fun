@@ -2,6 +2,7 @@
 """
 Created on Sun Dec 20 16:28:02 2015
 Last update on Mon Dec 22 2015
+michielfmstock@gamil.com
 
 @author: michielstock
 
@@ -132,7 +133,7 @@ class RestrictedBoltzmanMachine:
                 start += minibatch_size
                 # error
             complete_reconstruction = self.visible_given_hidden(
-                    self.hidden_given_visible(X, sample=True), sample=False)
+                    self.hidden_given_visible(X, sample=False), sample=False)
             mse_reconstr.append(np.mean((complete_reconstruction -
                                                                 visible)**2))
         return mse_reconstr

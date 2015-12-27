@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Dec 24 2015
-Last update on -
+Last update on Sun Dec 27 2015
 
 @author: michielstock
+michielfmstock@gamil.com
 
 Special case of the restricted boltzman machine for working with
 the recipes data
 
-Main file trains the RBM on the recipes data and saves it
+Implementation of a special class of the restricted boltzman machine for
+recommending recipes. Allows for saving the model.
+
+The main part trains a RBM on the recipe dataset
 """
 
 import numpy as np
@@ -132,6 +136,8 @@ if __name__ == '__main__':
     categories = pd.DataFrame.from_csv('categories.csv')
     print(categories.head())
 
+    print('')
+
     ingredients = recipes.columns[:-11]
     regions = recipes.columns[-11:]
 
@@ -145,7 +151,7 @@ if __name__ == '__main__':
 
     # train in some different phases
     error = rbm.train_C1(recipes.values, learning_rate=0.1,
-                                            iterations=10, minibatch_size=20)
+                                            iterations=100, minibatch_size=20)
     print('first training step finished')
     error += rbm.train_C1(recipes.values, learning_rate=0.01,
                                           iterations=200, minibatch_size=20)
@@ -154,7 +160,7 @@ if __name__ == '__main__':
                                           iterations=200, minibatch_size=20,
                                           momentum=0.5)
     print('third training step finished')
-                                          
+
     # plot learning and parameters
     plt.plot(error)
     plt.loglog()
@@ -170,11 +176,11 @@ if __name__ == '__main__':
     print()
 
     rbm.save('Recipe_parameters/')
-    
+
     print('TESTING THE MODEL')
     print('_' * 50)
     print('')
-    
+
     print("yogurt, cucumber, mint")
     print(rbm.recommend_ingredients(['yogurt', 'cucumber', 'mint'],
                                     top_size=10))
@@ -185,7 +191,6 @@ if __name__ == '__main__':
                                     top_size=10, category='spice'))
     print('')
 
-    print("meat, tomato, tomato (make South Asian)")
-    rbm.recommend_ingredients(['bean', 'beef', 'potato'], top_size=10,
-                              region='SouthAsian')                                    
-                                    
+    print("bean, beef, potato (make South Asian)")
+    pirnt(rbm.recommend_ingredients(['bean', 'beef', 'potato'], top_size=10,
+                              region='SouthAsian'))
