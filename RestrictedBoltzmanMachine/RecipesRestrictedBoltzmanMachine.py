@@ -90,6 +90,32 @@ class RecipeRestrictedBoltzmanMachinePretrained(
     from a previously trained model
     """
 
+    def __init__(self, directory):
+        """
+        Loads the recipe RBM from a repository containing the trained
+        model
+        """
+        # load the data
+        weights_dataframe = pd.DataFrame.from_csv('{0}_{1}'.format(directory,
+                                                  'weigths'))
+        bias_hidden_dataframe = pd.DataFrame.from_csv(
+                            '{0}_{1}'.format(directory, 'bias_visible'))
+        bias_visible_dataframe = pd.DataFrame.from_csv(
+                            '{0}_{1}'.format(directory, 'bias_hidden'))
+        categories_dataframe = pd.DataFrame.from_csv(
+                            '{0}_{1}'.format(directory, 'categories'))
+        # setup the RBM
+        self.ingredients = list(weights_dataframe.index[:-11])
+        self.regions = list(weights_dataframe.index[:-11])
+        self.categories = list(categories_dataframe['0'].tolist())
+        self.n_visible, self.n_hidden = weights_dataframe.shape
+        self._bias_visible = bias_visible_dataframe.values
+        self._bias_hidden = bias_hidden_dataframe.values
+        self._weights = weights_dataframe.values
+        self.ingredient_hash = {ingr: i for i, ingr in
+                                                enumerate(self.ingredients)}
+        self.region_hash = {reg: i + len(self.ingredients) for i,
+                            reg in enumerate(self.regions)}
 
 if __name__ == '__main__':
     import pandas as pd
@@ -98,7 +124,7 @@ if __name__ == '__main__':
     # load the data
     print('LOADING DATA')
     print('_' * 50)
-    print()
+    print('')
 
     recipes = pd.DataFrame.from_csv('Recipes_with_origin.csv')
     print(recipes.head())
@@ -112,16 +138,31 @@ if __name__ == '__main__':
     # initializing and training the model
     print('TRAINING THE MODEL')
     print('_' * 50)
-    print()
+    print('')
 
-    rbm = RecipeRestrictedBoltzmanMachine(ingredients, regions, n_hidden=250,
+    rbm = RecipeRestrictedBoltzmanMachine(ingredients, regions, n_hidden=500,
                                           categories=list(categories.category))
 
+    # train in some different phases
     error = rbm.train_C1(recipes.values, learning_rate=0.1,
-                         iterations=10, minibatch_size=20)
-
+                                            iterations=10, minibatch_size=20)
+    print('first training step finished')
+    error += rbm.train_C1(recipes.values, learning_rate=0.01,
+                                          iterations=200, minibatch_size=20)
+    print('second training step finished')
+    error += rbm.train_C1(recipes.values, learning_rate=0.01,
+                                          iterations=200, minibatch_size=20,
+                                          momentum=0.5)
+    print('third training step finished')
+                                          
+    # plot learning and parameters
     plt.plot(error)
     plt.loglog()
+    plt.title('Reconstruction error')
+    plt.xlabel('iteration')
+    plt.ylabel('MSE')
+
+    plt.imshow(rbm._weights, interpolation='nearest')
 
     # initializing and training the model
     print('SAVING THE MODEL')
@@ -129,3 +170,22 @@ if __name__ == '__main__':
     print()
 
     rbm.save('Recipe_parameters/')
+    
+    print('TESTING THE MODEL')
+    print('_' * 50)
+    print('')
+    
+    print("yogurt, cucumber, mint")
+    print(rbm.recommend_ingredients(['yogurt', 'cucumber', 'mint'],
+                                    top_size=10))
+    print('')
+
+    print("meat, tomato, tomato (recommend spice)")
+    print(rbm.recommend_ingredients(['meat', 'tomato', 'tomato'],
+                                    top_size=10, category='spice'))
+    print('')
+
+    print("meat, tomato, tomato (make South Asian)")
+    rbm.recommend_ingredients(['bean', 'beef', 'potato'], top_size=10,
+                              region='SouthAsian')                                    
+                                    
