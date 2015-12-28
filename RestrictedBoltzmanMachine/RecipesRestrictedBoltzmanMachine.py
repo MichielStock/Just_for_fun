@@ -146,24 +146,24 @@ if __name__ == '__main__':
     print('_' * 50)
     print('')
 
-    rbm = RecipeRestrictedBoltzmanMachine(ingredients, regions, n_hidden=500,
+    rbm = RecipeRestrictedBoltzmanMachine(ingredients, regions, n_hidden=250,
                                           categories=list(categories.category))
 
     # train in some different phases
     error = rbm.train_C1(recipes.values, learning_rate=0.1,
-                                            iterations=100, minibatch_size=20)
+                                            iterations=200, minibatch_size=20)
     print('first training step finished')
-    error += rbm.train_C1(recipes.values, learning_rate=0.01,
+    error += rbm.train_C1(recipes.values, learning_rate=0.05,
                                           iterations=200, minibatch_size=20)
     print('second training step finished')
     error += rbm.train_C1(recipes.values, learning_rate=0.01,
                                           iterations=200, minibatch_size=20,
-                                          momentum=0.5)
+                                          momentum=0.6)
     print('third training step finished')
 
     # plot learning and parameters
     plt.plot(error)
-    plt.loglog()
+    #plt.loglog()
     plt.title('Reconstruction error')
     plt.xlabel('iteration')
     plt.ylabel('MSE')
@@ -192,5 +192,5 @@ if __name__ == '__main__':
     print('')
 
     print("bean, beef, potato (make South Asian)")
-    pirnt(rbm.recommend_ingredients(['bean', 'beef', 'potato'], top_size=10,
+    print(rbm.recommend_ingredients(['bean', 'beef', 'potato'], top_size=10,
                               region='SouthAsian'))

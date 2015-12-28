@@ -107,12 +107,12 @@ class RestrictedBoltzmanMachine:
         da = 0
         db = 0
         for iteration in range(iterations):
-            shuffle(instances)
+            shuffle(instances)  # shuffle instances in each step
             start = 0
             while start < n_instances:
-                visible = X[start:start+minibatch_size]
-                lr = learning_rate / visible.shape[0]  # correct for sample
-                # size
+                visible = X[instances[start:start+minibatch_size]]
+                # correct learning rate for sample size
+                lr = learning_rate / visible.shape[0]
                 # sample corresponding hidden
                 hidden = self.hidden_given_visible(visible)
                 # get probabilities visible
@@ -132,10 +132,10 @@ class RestrictedBoltzmanMachine:
                 # update start
                 start += minibatch_size
                 # error
-            complete_reconstruction = self.visible_given_hidden(
-                    self.hidden_given_visible(X, sample=False), sample=False)
-            mse_reconstr.append(np.mean((complete_reconstruction -
-                                                                visible)**2))
+                mse_reconstr.append(np.mean((reconstr - visible)**2))
+            #complete_reconstruction = self.visible_given_hidden(
+                    #self.hidden_given_visible(X, sample=True), sample=True)
+            #mse_reconstr.append(np.mean((complete_reconstruction - X)**2))
         return mse_reconstr
         
         
