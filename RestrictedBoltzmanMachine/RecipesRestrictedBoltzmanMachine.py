@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Dec 24 2015
-Last update on Thu Dec 29 2015
+Last update on Tue Dec 29 2015
 
 @author: michielstock
 michielfmstock@gamil.com
@@ -16,6 +16,7 @@ The main part trains a RBM on the recipe dataset and saves this
 """
 
 import numpy as np
+import pandas as pd
 
 from RestrictedBoltzmanMachine import RestrictedBoltzmanMachine, sigmoid
 
@@ -170,7 +171,6 @@ if __name__ == '__main__':
 
     # plot learning and parameters
     plt.plot(error)
-    #plt.loglog()
     plt.title('Reconstruction error')
     plt.xlabel('iteration')
     plt.ylabel('MSE')
@@ -195,7 +195,7 @@ if __name__ == '__main__':
 
     print("meat, tomato, basil (recommend spice)")
     pretty_print_recommendation(rbm.recommend_ingredients(['meat', 'tomato',
-                               'basil'], top_size=10, category='spice'))
+                                     'basil'], top_size=10, category='spice'))
     print('')
 
     print("bean, beef, potato (make South Asian)")
