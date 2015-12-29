@@ -186,8 +186,8 @@ if __name__ == '__main__':
                                     top_size=10))
     print('')
 
-    print("meat, tomato, tomato (recommend spice)")
-    print(rbm.recommend_ingredients(['meat', 'tomato', 'tomato'],
+    print("meat, tomato, basil (recommend spice)")
+    print(rbm.recommend_ingredients(['meat', 'tomato', 'basil'],
                                     top_size=10, category='spice'))
     print('')
 
