@@ -6,10 +6,10 @@ Last update on Tue Dec 29 2015
 @author: michielstock
 michielfmstock@gamil.com
 
-Special case of the restricted boltzman machine for working with
+Special case of the restricted boltzmann machine for working with
 the recipes data
 
-Implementation of a special class of the restricted boltzman machine for
+Implementation of a special class of the restricted boltzmann machine for
 recommending recipes. Allows for saving the model.
 
 The main part trains a RBM on the recipe dataset and saves this
@@ -18,10 +18,10 @@ The main part trains a RBM on the recipe dataset and saves this
 import numpy as np
 import pandas as pd
 
-from RestrictedBoltzmanMachine import RestrictedBoltzmanMachine, sigmoid
+from RestrictedBoltzmannMachine import RestrictedBoltzmannMachine, sigmoid
 
 
-class RecipeRestrictedBoltzmanMachine(RestrictedBoltzmanMachine):
+class RecipeRestrictedBoltzmannMachine(RestrictedBoltzmannMachine):
     """
     Special version of the vanilla RBM suitable for recipe recommendation
     """
@@ -76,7 +76,7 @@ class RecipeRestrictedBoltzmanMachine(RestrictedBoltzmanMachine):
         """
         Saves the model parameters to a given directory
         Model can be loaded with the class
-            'RecipeRestrictedBoltzmanMachinePretrained'
+            'RecipeRestrictedBoltzmannMachinePretrained'
         """
         pd.DataFrame(self._weights, index=self.ingredients + self.regions
                     ).to_csv('{0}_{1}'.format(directory, 'weigths'))
@@ -88,10 +88,10 @@ class RecipeRestrictedBoltzmanMachine(RestrictedBoltzmanMachine):
                         '{0}_{1}'.format(directory, 'categories'))
 
 
-class RecipeRestrictedBoltzmanMachinePretrained(
-        RecipeRestrictedBoltzmanMachine):
+class RecipeRestrictedBoltzmannMachinePretrained(
+        RecipeRestrictedBoltzmannMachine):
     """
-    Subclass of the recipe restricted boltzman machine which can be loaded
+    Subclass of the recipe restricted boltzmann machine which can be loaded
     from a previously trained model
     """
 
@@ -104,9 +104,9 @@ class RecipeRestrictedBoltzmanMachinePretrained(
         weights_dataframe = pd.DataFrame.from_csv('{0}_{1}'.format(directory,
                                                   'weigths'))
         bias_hidden_dataframe = pd.DataFrame.from_csv(
-                            '{0}_{1}'.format(directory, 'bias_visible'))
-        bias_visible_dataframe = pd.DataFrame.from_csv(
                             '{0}_{1}'.format(directory, 'bias_hidden'))
+        bias_visible_dataframe = pd.DataFrame.from_csv(
+                            '{0}_{1}'.format(directory, 'bias_visible'))
         categories_dataframe = pd.DataFrame.from_csv(
                             '{0}_{1}'.format(directory, 'categories'))
         # setup the RBM
@@ -154,7 +154,7 @@ if __name__ == '__main__':
     print('_' * 50)
     print('')
 
-    rbm = RecipeRestrictedBoltzmanMachine(ingredients, regions, n_hidden=250,
+    rbm = RecipeRestrictedBoltzmannMachine(ingredients, regions, n_hidden=250,
                                           categories=list(categories.category))
 
     # train in some different phases

@@ -6,7 +6,7 @@ michielfmstock@gamil.com
 
 @author: michielstock
 
-Implementation of a restricted boltzman machine, uses an approximate scheme
+Implementation of a restricted boltzmann machine, uses an approximate scheme
 for training
 """
 
@@ -15,9 +15,9 @@ from random import shuffle
 
 sigmoid = lambda x : 1 / (1 + np.exp(-x))
 
-class RestrictedBoltzmanMachine:
+class RestrictedBoltzmannMachine:
     """
-    Basic restricted boltzman machine
+    Basic restricted boltzmann machine
     """
 
     def __init__(self, n_visible, n_hidden):
@@ -96,7 +96,7 @@ class RestrictedBoltzmanMachine:
     def train_C1(self, X, learning_rate=0.01, iterations=1000,
                  minibatch_size=10, momentum=0.9):
         """
-        Trains the restricted boltzman machine using Hinton's recommended
+        Trains the restricted boltzmann machine using Hinton's recommended
         method making use of a single Gibbs step.
         Uses momentum to speed up learning
         """
@@ -141,7 +141,7 @@ class RestrictedBoltzmanMachine:
         
 if __name__ == '__main__':
 
-    rbm = RestrictedBoltzmanMachine(100, 10)
+    rbm = RestrictedBoltzmannMachine(100, 10)
     pattern = np.kron(np.random.binomial(1, 0.5, (100, 10)), np.ones((1, 10)))
     error = rbm.train_C1(pattern, learning_rate=0.001, iterations=1000,
                               sampling_steps=1)
