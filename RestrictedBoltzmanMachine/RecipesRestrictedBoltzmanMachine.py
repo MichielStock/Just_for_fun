@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Dec 24 2015
-Last update on Sun Dec 27 2015
+Last update on Thu Dec 29 2015
 
 @author: michielstock
 michielfmstock@gamil.com
@@ -12,7 +12,7 @@ the recipes data
 Implementation of a special class of the restricted boltzman machine for
 recommending recipes. Allows for saving the model.
 
-The main part trains a RBM on the recipe dataset
+The main part trains a RBM on the recipe dataset and saves this
 """
 
 import numpy as np
@@ -120,6 +120,13 @@ class RecipeRestrictedBoltzmanMachinePretrained(
                                                 enumerate(self.ingredients)}
         self.region_hash = {reg: i + len(self.ingredients) for i,
                             reg in enumerate(self.regions)}
+                            
+def pretty_print_recommendation(recommendations):
+    """
+    Prints the recmmended ingredients provided by the recipes RBM
+    """
+    for p, ingr, cat in recommendations:
+        print('{0} ({1}) : {2}'.format(ingr, cat, p))
 
 if __name__ == '__main__':
     import pandas as pd
@@ -182,15 +189,15 @@ if __name__ == '__main__':
     print('')
 
     print("yogurt, cucumber, mint")
-    print(rbm.recommend_ingredients(['yogurt', 'cucumber', 'mint'],
-                                    top_size=10))
+    pretty_print_recommendation(rbm.recommend_ingredients(['yogurt',
+                                'cucumber', 'mint'], top_size=10))
     print('')
 
     print("meat, tomato, basil (recommend spice)")
-    print(rbm.recommend_ingredients(['meat', 'tomato', 'basil'],
-                                    top_size=10, category='spice'))
+    pretty_print_recommendation(rbm.recommend_ingredients(['meat', 'tomato',
+                               'basil'], top_size=10, category='spice'))
     print('')
 
     print("bean, beef, potato (make South Asian)")
-    print(rbm.recommend_ingredients(['bean', 'beef', 'potato'], top_size=10,
-                              region='SouthAsian'))
+    pretty_print_recommendation(rbm.recommend_ingredients(['bean', 'beef',
+                                'potato'], top_size=10, region='SouthAsian'))
