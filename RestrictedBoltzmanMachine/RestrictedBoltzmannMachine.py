@@ -160,7 +160,9 @@ if __name__ == '__main__':
     plt.plot(error)
     plt.xlabel('iteration')
     plt.ylabel('MSE')
+    plt.show()
     
     plt.imshow(rbm._weights)
+    plt.show()
                                                  
     print rbm.sample_fantasies(np.random.binomial(1, 0.5,(5, 100)))

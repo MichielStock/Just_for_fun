@@ -6,12 +6,12 @@ Last update on -
 @author: michielstock
 michielfmstock@gamil.com
 
-Script to use a pre-trained restriced Boltzman machine for recipes via
+Script to use a pre-trained restriced Boltzmann machine for recipes via
 the terminal
 """
 
-from RecipesRestrictedBoltzmanMachine import\
-    RecipeRestrictedBoltzmanMachinePretrained, pretty_print_recommendation
+from RecipesRestrictedBoltzmannMachine import\
+    RecipeRestrictedBoltzmannMachinePretrained, pretty_print_recommendation
 import sys
 import re
 
@@ -25,7 +25,7 @@ if len(arguments) == 1:  # no arguments
 else:
     input_string = ' '.join(arguments[1:])
     # load model
-    recipe_rbm = RecipeRestrictedBoltzmanMachinePretrained(
+    recipe_rbm = RecipeRestrictedBoltzmannMachinePretrained(
                                                         'Recipe_parameters/')
     n_ingr_arg = re.findall('-[nN] [0-9]+', input_string)
     region_arg = re.findall('-[rR] \S+', input_string)

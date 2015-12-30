@@ -40,7 +40,7 @@ class RecipeRestrictedBoltzmannMachine(RestrictedBoltzmannMachine):
                             reg in enumerate(regions)}
 
     def recommend_ingredients(self, recipe, top_size=5, region=None,
-                              category=None):
+                              category=None, sample=False):
         """
         For a given recipe, recommend ingredients that might match
         Optionally, region of the recipe can be fixed as can the category
@@ -58,6 +58,8 @@ class RecipeRestrictedBoltzmannMachine(RestrictedBoltzmannMachine):
                     self.region_hash[region]]].reshape(-1, 1)
         # transform to probabilities
         p_hidden = sigmoid(activation_hidden)
+        if sample:
+            p_hidden = np.random.binomial(1, p_hidden)
         # use hidden actions to reconstruct recipe
         p_visible_reconstructed = list(sigmoid((np.dot(self._weights,
                                     p_hidden) + self._bias_visible).ravel()))
@@ -154,18 +156,18 @@ if __name__ == '__main__':
     print('_' * 50)
     print('')
 
-    rbm = RecipeRestrictedBoltzmannMachine(ingredients, regions, n_hidden=250,
+    rbm = RecipeRestrictedBoltzmannMachine(ingredients, regions, n_hidden=100,
                                           categories=list(categories.category))
 
     # train in some different phases
-    error = rbm.train_C1(recipes.values, learning_rate=0.1,
-                                            iterations=200, minibatch_size=20)
+    error = rbm.train_C1(recipes.values, learning_rate=0.05,
+                                            iterations=50, minibatch_size=20)
     print('first training step finished')
-    error += rbm.train_C1(recipes.values, learning_rate=0.05,
-                                          iterations=200, minibatch_size=20)
-    print('second training step finished')
     error += rbm.train_C1(recipes.values, learning_rate=0.01,
-                                          iterations=200, minibatch_size=20,
+                                          iterations=50, minibatch_size=20)
+    print('second training step finished')
+    error += rbm.train_C1(recipes.values, learning_rate=0.005,
+                                          iterations=50, minibatch_size=20,
                                           momentum=0.6)
     print('third training step finished')
 
@@ -174,8 +176,11 @@ if __name__ == '__main__':
     plt.title('Reconstruction error')
     plt.xlabel('iteration')
     plt.ylabel('MSE')
+    plt.loglog()
+    plt.show()
 
     plt.imshow(rbm._weights, interpolation='nearest')
+    plt.show()
 
     # initializing and training the model
     print('SAVING THE MODEL')
@@ -190,14 +195,17 @@ if __name__ == '__main__':
 
     print("yogurt, cucumber, mint")
     pretty_print_recommendation(rbm.recommend_ingredients(['yogurt',
-                                'cucumber', 'mint'], top_size=10))
+                                'cucumber', 'mint'], top_size=10,
+                                sample=True))
     print('')
 
     print("meat, tomato, basil (recommend spice)")
     pretty_print_recommendation(rbm.recommend_ingredients(['meat', 'tomato',
-                                     'basil'], top_size=10, category='spice'))
+                                     'basil'], top_size=10, category='spice',
+                                     sample=True))
     print('')
 
     print("bean, beef, potato (make South Asian)")
     pretty_print_recommendation(rbm.recommend_ingredients(['bean', 'beef',
-                                'potato'], top_size=10, region='SouthAsian'))
+                                'potato'], top_size=10, region='SouthAsian',
+                                sample=True))
