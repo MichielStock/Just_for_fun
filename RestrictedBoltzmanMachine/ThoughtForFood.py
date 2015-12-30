@@ -55,5 +55,5 @@ else:
         
     recommendations = recipe_rbm.recommend_ingredients(ingredients,
                                     top_size=n_ingr, region=region,
-                                    category=category)
+                                    category=category, sample=True)
     pretty_print_recommendation(recommendations)

@@ -161,14 +161,16 @@ if __name__ == '__main__':
 
     # train in some different phases
     error = rbm.train_C1(recipes.values, learning_rate=0.05,
-                                            iterations=50, minibatch_size=20)
+                                            iterations=100, minibatch_size=20)
     print('first training step finished')
+    """
     error += rbm.train_C1(recipes.values, learning_rate=0.01,
                                           iterations=50, minibatch_size=20)
     print('second training step finished')
     error += rbm.train_C1(recipes.values, learning_rate=0.005,
                                           iterations=50, minibatch_size=20,
                                           momentum=0.6)
+    """
     print('third training step finished')
 
     # plot learning and parameters

@@ -124,15 +124,15 @@ class RestrictedBoltzmannMachine:
                 # sample corresponding hidden
                 hidden_CD0 = self.hidden_given_visible(visible_CD0)
                 # get probabilities visible
-                reconstr = self.visible_given_hidden(hidden_CD0, sample=False)
+                #reconstr = self.visible_given_hidden(hidden_CD0, sample=True)
                 visible_CD1 = self.visible_given_hidden(hidden_CD0)
                 hidden_CD1 = self.hidden_given_visible(visible_CD1,
                                                            sample=False)
                 # new directions
                 dW = (1 - momentum) * lr * (np.dot(visible_CD0.T, hidden_CD0)-\
-                        np.dot(reconstr.T, hidden_CD1)) + momentum * dW
+                        np.dot(visible_CD1.T, hidden_CD1)) + momentum * dW
                 da = (1 - momentum) * lr * (visible_CD0.sum(0) -\
-                        reconstr.sum(0)).reshape(-1,1) + momentum * da
+                        visible_CD1.sum(0)).reshape(-1,1) + momentum * da
                 db = (1 - momentum) * lr * (hidden_CD0.sum(0) -\
                         hidden_CD1.sum(0)).reshape(-1,1) + momentum * db
                 # update weights
@@ -142,7 +142,7 @@ class RestrictedBoltzmannMachine:
                 # update start
                 start += minibatch_size
                 # error
-                mse_reconstr.append(np.mean((reconstr - visible_CD0)**2))
+                mse_reconstr.append(np.mean((visible_CD1 - visible_CD0)**2))
             #complete_reconstruction = self.visible_given_hidden(
                     #self.hidden_given_visible(X, sample=True), sample=True)
             #mse_reconstr.append(np.mean((complete_reconstruction - X)**2))
