@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Dec 20 16:28:02 2015
-Last update on Tue Dec 29 2015
+Last update on Sat Jan 02 2016
+
 michielfmstock@gamil.com
 
 @author: michielstock
@@ -102,13 +103,15 @@ class RestrictedBoltzmannMachine:
         return mse_reconstr
         
     def train_C1(self, X, learning_rate=0.01, iterations=1000,
-                 minibatch_size=10, momentum=0.9):
+                 minibatch_size=10, momentum=0.9, l1_reg=None):
         """
         Trains the restricted boltzmann machine using Hinton's recommended
         method making use of a single Gibbs step.
         Uses momentum to speed up learning
         """
         n_instances = len(X)
+        # threshold for sparsity
+        epsilon = 0.001
         instances = range(n_instances)
         mse_reconstr = []
         dW = 0
@@ -130,13 +133,19 @@ class RestrictedBoltzmannMachine:
                                                            sample=False)
                 # new directions
                 dW = (1 - momentum) * lr * (np.dot(visible_CD0.T, hidden_CD0)-\
-                        np.dot(visible_CD1.T, hidden_CD1)) + momentum * dW
+                        np.dot(visible_CD1.T, hidden_CD1))
+                if l1_reg is not None:
+                    dW -= (1 - momentum) * lr * l1_reg * np.sign(self._weights)
+                dW += momentum * dW
                 da = (1 - momentum) * lr * (visible_CD0.sum(0) -\
                         visible_CD1.sum(0)).reshape(-1,1) + momentum * da
                 db = (1 - momentum) * lr * (hidden_CD0.sum(0) -\
                         hidden_CD1.sum(0)).reshape(-1,1) + momentum * db
                 # update weights
                 self._weights += dW
+                if l1_reg is not None:
+                    # set small weigths to zero
+                    self._weights[np.abs(self._weights) < epsilon] = 0
                 self._bias_visible += da
                 self._bias_hidden += db
                 # update start
@@ -154,15 +163,16 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     
     rbm = RestrictedBoltzmannMachine(100, 10)
-    pattern = np.kron(np.random.binomial(1, 0.5, (100, 10)), np.ones((1, 10)))
-    error = rbm.train_C1(pattern, learning_rate=0.01, iterations=1000)
+    pattern = np.kron(np.random.binomial(1, 0.5, (1000, 10)), np.ones((1, 10)))
+    error = rbm.train_C1(pattern, learning_rate=0.1, iterations=1000,
+                         l1_reg=1e-5)
     
     plt.plot(error)
     plt.xlabel('iteration')
     plt.ylabel('MSE')
     plt.show()
     
-    plt.imshow(rbm._weights)
+    plt.imshow(rbm._weights, interpolation='nearest')
     plt.show()
                                                  
     print rbm.sample_fantasies(np.random.binomial(1, 0.5,(5, 100)))

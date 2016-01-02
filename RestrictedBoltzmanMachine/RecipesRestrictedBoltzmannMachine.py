@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Dec 24 2015
-Last update on Tue Dec 29 2015
+Last update on Sat Jan 02 2016
 
 @author: michielstock
 michielfmstock@gamil.com
@@ -156,22 +156,26 @@ if __name__ == '__main__':
     print('_' * 50)
     print('')
 
-    rbm = RecipeRestrictedBoltzmannMachine(ingredients, regions, n_hidden=100,
+    rbm = RecipeRestrictedBoltzmannMachine(ingredients, regions, n_hidden=1000,
                                           categories=list(categories.category))
 
+    regularization = 1e-4
     # train in some different phases
     error = rbm.train_C1(recipes.values, learning_rate=0.05,
-                                            iterations=100, minibatch_size=20)
+                                            iterations=200, minibatch_size=10,
+                                            l1_reg=regularization)
     print('first training step finished')
-    """
+    
     error += rbm.train_C1(recipes.values, learning_rate=0.01,
-                                          iterations=50, minibatch_size=20)
+                                          iterations=200, minibatch_size=20,
+                                            l1_reg=regularization)
     print('second training step finished')
     error += rbm.train_C1(recipes.values, learning_rate=0.005,
-                                          iterations=50, minibatch_size=20,
-                                          momentum=0.6)
-    """
+                                          iterations=200, minibatch_size=20,
+                                          momentum=0.4,
+                                          l1_reg=regularization)    
     print('third training step finished')
+    
 
     # plot learning and parameters
     plt.plot(error)
@@ -194,20 +198,22 @@ if __name__ == '__main__':
     print('TESTING THE MODEL')
     print('_' * 50)
     print('')
+    
+    sample_ingr = True
 
     print("yogurt, cucumber, mint")
     pretty_print_recommendation(rbm.recommend_ingredients(['yogurt',
                                 'cucumber', 'mint'], top_size=10,
-                                sample=True))
+                                sample=sample_ingr))
     print('')
 
-    print("meat, tomato, basil (recommend spice)")
+    print("pork, tomato, basil (recommend spice)")
     pretty_print_recommendation(rbm.recommend_ingredients(['meat', 'tomato',
                                      'basil'], top_size=10, category='spice',
-                                     sample=True))
+                                     sample=sample_ingr))
     print('')
 
     print("bean, beef, potato (make South Asian)")
     pretty_print_recommendation(rbm.recommend_ingredients(['bean', 'beef',
                                 'potato'], top_size=10, region='SouthAsian',
-                                sample=True))
+                                sample=sample_ingr))
