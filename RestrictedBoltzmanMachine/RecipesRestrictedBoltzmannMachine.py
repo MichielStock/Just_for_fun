@@ -172,7 +172,7 @@ if __name__ == '__main__':
     print('second training step finished')
     error += rbm.train_C1(recipes.values, learning_rate=0.005,
                                           iterations=200, minibatch_size=20,
-                                          momentum=0.4,
+                                          momentum=0.8,
                                           l1_reg=regularization)    
     print('third training step finished')
     
@@ -199,7 +199,7 @@ if __name__ == '__main__':
     print('_' * 50)
     print('')
     
-    sample_ingr = True
+    sample_ingr = False
 
     print("yogurt, cucumber, mint")
     pretty_print_recommendation(rbm.recommend_ingredients(['yogurt',
