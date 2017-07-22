@@ -69,11 +69,8 @@ for metabolite in urine_metabolites_db['metabolite']:
         metabolite_data['diseases'] = diseases
 
     urine_metabolites_data[name] = metabolite_data
-    # normal concentrations
-    if metabolite['normal_concentations'] is not None:
-        
+    
 
 # save the dataset
 with open('Data/urine_metabolome.json', 'w') as fp:
-    json.dump(obj=urine_metabolites_data, fp=fp,
-        indent=True, ensure_ascii=True)
+    json.dump(obj=urine_metabolites_data, fp=fp, indent=True, ensure_ascii=True)
