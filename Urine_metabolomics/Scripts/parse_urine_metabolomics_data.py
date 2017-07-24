@@ -69,7 +69,7 @@ for metabolite in urine_metabolites_db['metabolite']:
         metabolite_data['diseases'] = diseases
 
     urine_metabolites_data[name] = metabolite_data
-    
+
 
 # save the dataset
 with open('Data/urine_metabolome.json', 'w') as fp:
