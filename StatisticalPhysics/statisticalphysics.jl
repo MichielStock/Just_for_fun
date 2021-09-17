@@ -13,8 +13,8 @@ c3 = Circle(4, 6, 1)
 
 function plot_circle(circle::Circle, ax, color="black")
     t = linspace(0, 2pi, 200)
-    xvals = circle.r .* cos.(t) .+ circle.x
-    yvals = circle.r .* sin.(t) .+ circle.y
+    xvals = @. circle.r .* cos.(t) .+ circle.x
+    yvals = @. circle.r .* sin.(t) .+ circle.y
     ax[:plot](xvals, yvals, color=color)
 end
 
@@ -29,16 +29,25 @@ function generate_circles(n_circles::Int64, radius::Float64=1.0,
     circles
 end
 
+function fill_circles!(circles, radius::Float64=1.0,
+                            boxheight::Float64=20.0, boxwidth::Float64=30.0)
+    for i in eachindex(circles)
+        x = rand() * (boxwidth - 2radius) + radius
+        y = rand() * (boxheight - 2radius) + radius
+        circles[i] = Circle(x, y, radius)
+    end
+end
+
 function check_overlap_circles(circles::Array{Circle}, radius::Float64=1.0)
     n_circles = length(circles)
     overlap = Array{Bool}(n_circles)
     fill!(overlap, false)
-    radiussq = radius^2
+    radiussq = radius^2.0
     ax[:set_xlim]([0, 30])
     ax[:set_ylim]([0, 20])
     for i in 2:n_circles
+        x1, y1 = circles[i].x, circles[i].y
         for j in 1:(i-1)
-            x1, y1 = circles[i].x, circles[i].y
             x2, y2 = circles[j].x, circles[j].y
             if (x1 - x2)^2 + (y1 - y2)^2 < 4radiussq
                 overlap[i] = true
@@ -67,7 +76,7 @@ function simulate_circles(n_samples::Int64, n_circles::Int64)
     sim = 0
     while n_succes < n_samples
         sim = sim + 1
-        circles[:] = generate_circles(n_circles)
+        fill_circles!(circles)
         overlap[:] = check_overlap_circles(circles)
         if !any(overlap)
             n_succes = n_succes + 1
@@ -102,7 +111,6 @@ for sim in 1:n_example_simulations
     end
     savefig("simulation_$sim")
 end
-
 
 # Simulations
 
